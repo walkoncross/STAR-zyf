@@ -174,11 +174,14 @@ def get_criterions(config):
 
 
 def set_environment(config):
-    if config.device_id >= 0:
+    if config.device_id == "cuda" or isinstance(config.device_id, int):
         assert torch.cuda.is_available() and torch.cuda.device_count() > config.device_id
         torch.cuda.empty_cache()
         config.device = torch.device("cuda", config.device_id)
         config.use_gpu = True
+    elif config.device_id == "mps":
+        config.device = torch.device("mps")
+        config.use_gpu = False
     else:
         config.device = torch.device("cpu")
         config.use_gpu = False
